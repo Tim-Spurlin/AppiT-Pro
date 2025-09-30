@@ -91,7 +91,7 @@ async fn main() -> anyhow::Result<()> {
         .with_state(state);
 
     // Setup TLS configuration for local HTTPS
-    let config = setup_tls_config().await?;
+    let _config = setup_tls_config().await?;
     
     // Bind to localhost only for security
     let addr = SocketAddr::from(([127, 0, 0, 1], 7420));

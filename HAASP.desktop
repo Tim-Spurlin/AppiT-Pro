@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=HAASP
+Comment=Hyper-Advanced Associative Application Synthesis Platform
+Exec="/home/tim-spurlin/Desktop/Developer Hub/Projects/2025/September/AppiT-Pro/start.sh" start
+Icon=/home/tim-spurlin/Desktop/Developer Hub/Projects/2025/September/AppiT-Pro/resources/haasp-icon.svg
+Terminal=true
+Categories=Development;Utility;
+Keywords=AI;ML;Git;Development;
+StartupWMClass=haasp
