@@ -1,22 +1,30 @@
-faiss_index/
-__pycache__/
-*.pyc
-venv/
-webapp/target/
-webapp/target/**
-webapp/webapp/cert/*.key
-webapp/webapp/cert/*.crt
-build/
-*.qmlc
-.moc/
-.qmake.stash
-CMakeFiles/
-CMakeCache.txt
-*.o
-*.obj
-*.so
-*.a
-*.user
+# IDE and environment files
 .idea/
 .vscode/
-.env
+*.swp
+*.swo
+
+# Build artifacts
+build/
+target/
+dist/
+*.o
+*.a
+*.so
+*.dll
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Certificates and private keys
+cert/
+*.key
+
+# Other
+uv_install.sh
+/cpp/build/
+/webapp/target/
+/python/.venv/

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find Qt6 components
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Qml Quick QuickControls2 Concurrent)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Core Widgets Qml Quick QuickControls2 Concurrent)
 
 # Find libgit2
 find_package(PkgConfig REQUIRED)
