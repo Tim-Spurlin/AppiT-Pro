@@ -1,0 +1,15 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <file alias="qml/Main.qml">src/ui/qml/Main.qml</file>
+        <file alias="qml/PreviewSurface.qml">src/ui/qml/PreviewSurface.qml</file>
+        <file alias="qml/GitPortal.qml">src/ui/qml/GitPortal.qml</file>
+        <file alias="qml/Inspector.qml">src/ui/qml/Inspector.qml</file>
+        <file alias="qml/Hierarchy.qml">src/ui/qml/Hierarchy.qml</file>
+        <file alias="qml/Timeline.qml">src/ui/qml/Timeline.qml</file>
+        <file alias="qml/BindingEditor.qml">src/ui/qml/BindingEditor.qml</file>
+        <file alias="qml/PropertyEditor.qml">src/ui/qml/PropertyEditor.qml</file>
+        <file alias="qml/TreeItem.qml">src/ui/qml/TreeItem.qml</file>
+        <file alias="qml/SimpleMain.qml">src/ui/qml/SimpleMain.qml</file>
+    </qresource>
+</RCC>

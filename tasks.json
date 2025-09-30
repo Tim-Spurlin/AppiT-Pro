@@ -1,0 +1,38 @@
+[
+  {
+    "content": "Setup project structure and CMake build system for HAASP with libgit2 integration",
+    "status": "completed",
+    "tag": "[P:foundation-1]",
+    "id": "1"
+  },
+  {
+    "content": "Implement Git Service C++ class with libgit2 bindings for repository operations",
+    "status": "completed",
+    "tag": "[P:foundation-2]",
+    "id": "2"
+  },
+  {
+    "content": "Create QML GitPortal component for VS Code integration bridge",
+    "status": "completed",
+    "tag": "[P:foundation-3]",
+    "id": "3"
+  },
+  {
+    "content": "Setup Rust WebApp scaffold with Axum for Insights++ local TLS server",
+    "status": "completed",
+    "tag": "[P:foundation-4]",
+    "id": "4"
+  },
+  {
+    "content": "Configure Python Git Intelligence pipeline with code quality ML models",
+    "status": "completed",
+    "tag": "[P:foundation-5]",
+    "id": "5"
+  },
+  {
+    "content": "Create remaining QML components (Inspector, Hierarchy, Timeline)",
+    "status": "completed",
+    "tag": "[P:foundation-6]",
+    "id": "6"
+  }
+]

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Repository: {{ repo.name }} - HAASP Insights++</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: white; border: 1px solid #ddd; padding: 15px; border-radius: 8px; text-align: center; }
+        .stat-value { font-size: 1.5em; font-weight: bold; color: #007bff; }
+        .commits { margin-top: 30px; }
+        .commit-item { background: white; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px; }
+        .commit-author { color: #666; font-size: 0.9em; }
+        .commit-date { color: #666; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ repo.name }}</h1>
+        <p>{% if repo.description != "" %}{{ repo.description }}{% else %}No description{% endif %}</p>
+        <p><strong>Path:</strong> {{ repo.path }}</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.total_commits }}</div>
+            <div>Total Commits</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.branches }}</div>
+            <div>Branches</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.files }}</div>
+            <div>Files</div>
+        </div>
+    </div>
+
+    <div class="commits">
+        <h2>Recent Commits</h2>
+        {% for commit in commits %}
+        <div class="commit-item">
+            <h4>{{ commit.message }}</h4>
+            <div class="commit-author">by {{ commit.author.name }} &lt;{{ commit.author.email }}&gt;</div>
+            <div class="commit-date">{{ commit.timestamp }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

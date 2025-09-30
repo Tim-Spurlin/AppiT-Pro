@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HAASP Insights++ - Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card { background: white; border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+        .stat-card h3 { margin-top: 0; color: #333; }
+        .stat-value { font-size: 2em; font-weight: bold; color: #007bff; }
+        .repo-list { margin-top: 30px; }
+        .repo-item { background: white; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>HAASP Insights++ Dashboard</h1>
+        <p>GitHub-like analytics for your repositories</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Repositories</h3>
+            <div class="stat-value">{{ repositories.len() }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Total Commits</h3>
+            <div class="stat-value">{{ stats.total_commits }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Active Branches</h3>
+            <div class="stat-value">{{ stats.branches }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Files Tracked</h3>
+            <div class="stat-value">{{ stats.files }}</div>
+        </div>
+    </div>
+
+    <div class="repo-list">
+        <h2>Repositories</h2>
+        {% for repo in repositories %}
+        <div class="repo-item">
+            <h3><a href="/repo/{{ repo.id }}">{{ repo.name }}</a></h3>
+            <p>{% if repo.description != "" %}{{ repo.description }}{% else %}No description{% endif %}</p>
+            <small>Last updated: {{ repo.updated_at }}</small>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
