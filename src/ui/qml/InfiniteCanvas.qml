@@ -626,9 +626,9 @@ Component {
     Item {
         id: gridBackground
         anchors.fill: parent
-    
-    property int gridSize: 50
-    property color gridColor: "#333333"
+        
+        property int gridSize: 50
+        property color gridColor: "#333333"
     
     Canvas {
         anchors.fill: parent

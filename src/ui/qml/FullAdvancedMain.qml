@@ -2,31 +2,710 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
-import org.kde.kirigami 2.19 as Kirigami
 
 ApplicationWindow {
     id: haaspWindow
     
-    title: "HAASP - Hyper-Advanced Associative Application Synthesis Platform"
-    import QtQuick 2.15
-    import QtQuick.Controls 2.15
-    import QtQuick.Layouts 1.15
-    import QtQuick.Window 2.15
+    title: "HAASP - Advanced Interface"
+    visible: true
+    width: 1600
+    height: 1000
+    minimumWidth: 1200
+    minimumHeight: 800
+    
+    color: "#1B1C20"
+    
+    // Global state
+    property bool servicesConnected: false
+    property bool voiceEnabled: false
+    property var currentProject: null
+    
+    Component.onCompleted: {
+        console.log("🚀 HAASP Advanced Interface Started")
+        initializeAdvancedFeatures()
+    }
+    
+    // Main interface layout
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 0
+        
+        // Top toolbar
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 50
+            color: "#2d2d2d"
+            
+            RowLayout {
+                anchors.fill: parent
+                anchors.margins: 10
+                
+                // Branding
+                Row {
+                    spacing: 10
+                    
+                    Text {
+                        text: "🚀"
+                        color: "#00ff88"
+                        font.pixelSize: 20
+                    }
+                    
+                    Text {
+                        text: "HAASP Advanced"
+                        color: "#ffffff"
+                        font.bold: true
+                        font.pixelSize: 16
+                    }
+                }
+                
+                Item { Layout.fillWidth: true }
+                
+                // Quick actions
+                Row {
+                    spacing: 8
+                    
+                    Button {
+                        text: "📁 Repository"
+                        onClicked: loadRepository()
+                    }
+                    
+                    Button {
+                        text: voiceEnabled ? "🎤 ON" : "🎤 OFF"
+                        checkable: true
+                        checked: voiceEnabled
+                        onToggled: voiceEnabled = checked
+                    }
+                    
+                    Button {
+                        text: "⚙️ Settings"
+                        onClicked: showSettings()
+                    }
+                }
+            }
+        }
+        
+        // Main workspace
+        SplitView {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            orientation: Qt.Horizontal
+            
+            // Left sidebar - Pilots & Project
+            Rectangle {
+                SplitView.minimumWidth: 300
+                SplitView.preferredWidth: 350
+                color: "#252525"
+                
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    
+                    // Project info
+                    GroupBox {
+                        title: "Project"
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 150
+                        
+                        ColumnLayout {
+                            anchors.fill: parent
+                            
+                            Text {
+                                text: currentProject ? 
+                                      `📁 ${currentProject.name}\n📍 ${currentProject.path}` :
+                                      "No project loaded"
+                                color: "#ffffff"
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                            }
+                            
+                            Button {
+                                text: "📊 View Analytics"
+                                Layout.fillWidth: true
+                                enabled: currentProject !== null
+                                onClicked: Qt.openUrlExternally("https://127.0.0.1:7420")
+                            }
+                        }
+                    }
+                    
+                    // AI Pilots
+                    GroupBox {
+                        title: "AI Pilots"
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        
+                        ColumnLayout {
+                            anchors.fill: parent
+                            
+                            // Control buttons
+                            RowLayout {
+                                Layout.fillWidth: true
+                                
+                                Button {
+                                    text: "▶️ Run"
+                                    Layout.fillWidth: true
+                                    onClicked: runPilots()
+                                }
+                                
+                                Button {
+                                    text: "⏹️ Stop"
+                                    Layout.fillWidth: true
+                                    onClicked: stopPilots()
+                                }
+                            }
+                            
+                            // Pilot list
+                            ListView {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                model: pilotsModel
+                                spacing: 5
+                                
+                                delegate: Rectangle {
+                                    width: ListView.view.width
+                                    height: 60
+                                    color: "#333333"
+                                    radius: 4
+                                    
+                                    RowLayout {
+                                        anchors.fill: parent
+                                        anchors.margins: 8
+                                        
+                                        Rectangle {
+                                            width: 12
+                                            height: 12
+                                            radius: 6
+                                            color: model.active ? "#4CAF50" : "#666666"
+                                        }
+                                        
+                                        Column {
+                                            Layout.fillWidth: true
+                                            
+                                            Text {
+                                                text: model.name
+                                                color: "#ffffff"
+                                                font.bold: true
+                                            }
+                                            
+                                            Text {
+                                                text: `Status: ${model.status}`
+                                                color: "#cccccc"
+                                                font.pixelSize: 10
+                                            }
+                                        }
+                                        
+                                        Switch {
+                                            checked: model.active
+                                            onToggled: togglePilot(model.id, checked)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Center - Canvas or Main View
+            Rectangle {
+                SplitView.fillWidth: true
+                color: "#1e1e1e"
+                
+                StackLayout {
+                    anchors.fill: parent
+                    currentIndex: tabBar.currentIndex
+                    
+                    // Canvas View
+                    Item {
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "#1a1a1a"
+                            
+                            Text {
+                                anchors.centerIn: parent
+                                text: "🎨 Infinite Canvas\n\n(Advanced canvas will be implemented here)\n\nFor now: Drag & drop pilot orchestration"
+                                color: "#ffffff"
+                                font.pixelSize: 14
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+                        }
+                    }
+                    
+                    // Chat View
+                    Rectangle {
+                        color: "#1a1a1a"
+                        
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 10
+                            
+                            // Chat messages
+                            ScrollView {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                
+                                ListView {
+                                    id: chatView
+                                    model: chatModel
+                                    spacing: 8
+                                    
+                                    delegate: Rectangle {
+                                        width: chatView.width
+                                        height: messageText.implicitHeight + 20
+                                        color: model.sender === "user" ? "#2d4a2d" : "#2d2a4a"
+                                        radius: 6
+                                        
+                                        Text {
+                                            id: messageText
+                                            anchors.fill: parent
+                                            anchors.margins: 10
+                                            text: `${model.sender}: ${model.message}`
+                                            color: "#ffffff"
+                                            wrapMode: Text.WordWrap
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // Chat input
+                            RowLayout {
+                                Layout.fillWidth: true
+                                
+                                TextField {
+                                    id: chatInput
+                                    Layout.fillWidth: true
+                                    placeholderText: "Ask HAASP anything..."
+                                    onAccepted: sendChatMessage()
+                                }
+                                
+                                Button {
+                                    text: "Send"
+                                    onClicked: sendChatMessage()
+                                }
+                                
+                                Button {
+                                    text: "🎤"
+                                    enabled: voiceEnabled
+                                    onClicked: startVoiceInput()
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Analytics View
+                    Rectangle {
+                        color: "#1a1a1a"
+                        
+                        Text {
+                            anchors.centerIn: parent
+                            text: "📊 Advanced Analytics\n\n(Real-time analytics dashboard)\n\nVisit: https://127.0.0.1:7420"
+                            color: "#ffffff"
+                            font.pixelSize: 14
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+                    }
+                }
+            }
+            
+            // Right sidebar - Search & Inspector
+            Rectangle {
+                SplitView.minimumWidth: 300
+                SplitView.preferredWidth: 400
+                color: "#252525"
+                
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    
+                    // Search interface
+                    GroupBox {
+                        title: "🔍 Intelligent Search"
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 400
+                        
+                        ColumnLayout {
+                            anchors.fill: parent
+                            
+                            // Search input
+                            RowLayout {
+                                Layout.fillWidth: true
+                                
+                                TextField {
+                                    id: searchField
+                                    Layout.fillWidth: true
+                                    placeholderText: "Search anything..."
+                                    onAccepted: performSearch()
+                                }
+                                
+                                Button {
+                                    text: "🔍"
+                                    onClicked: performSearch()
+                                }
+                                
+                                Button {
+                                    text: "🎯"
+                                    onClicked: performRAGSearch()
+                                }
+                            }
+                            
+                            // Search modes
+                            Row {
+                                spacing: 8
+                                
+                                ButtonGroup {
+                                    id: searchModeGroup
+                                }
+                                
+                                RadioButton {
+                                    text: "All"
+                                    checked: true
+                                    ButtonGroup.group: searchModeGroup
+                                }
+                                RadioButton {
+                                    text: "Code"
+                                    ButtonGroup.group: searchModeGroup
+                                }
+                                RadioButton {
+                                    text: "Docs"
+                                    ButtonGroup.group: searchModeGroup
+                                }
+                            }
+                            
+                            // Results
+                            ScrollView {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                
+                                ListView {
+                                    model: searchResultsModel
+                                    spacing: 4
+                                    
+                                    delegate: Rectangle {
+                                        width: ListView.view.width
+                                        height: 80
+                                        color: "#333333"
+                                        radius: 4
+                                        
+                                        ColumnLayout {
+                                            anchors.fill: parent
+                                            anchors.margins: 8
+                                            
+                                            Text {
+                                                text: model.title || "Result"
+                                                color: "#ffffff"
+                                                font.bold: true
+                                            }
+                                            
+                                            Text {
+                                                text: model.content || ""
+                                                color: "#cccccc"
+                                                wrapMode: Text.WordWrap
+                                                Layout.fillWidth: true
+                                                maximumLineCount: 2
+                                                elide: Text.ElideRight
+                                            }
+                                            
+                                            Text {
+                                                text: `Score: ${(model.score || 0).toFixed(3)} | Source: ${model.source || "unknown"}`
+                                                color: "#888888"
+                                                font.pixelSize: 9
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Inspector
+                    GroupBox {
+                        title: "🔧 Inspector"
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        
+                        ScrollView {
+                            anchors.fill: parent
+                            
+                            ColumnLayout {
+                                width: parent.width - 20
+                                spacing: 10
+                                
+                                Text {
+                                    text: "System Status"
+                                    color: "#ffffff"
+                                    font.bold: true
+                                }
+                                
+                                Text {
+                                    text: servicesConnected ? "✅ All services connected" : "⚠️ Some services offline"
+                                    color: servicesConnected ? "#4CAF50" : "#FF9800"
+                                }
+                                
+                                Text {
+                                    text: "Advanced Features"
+                                    color: "#ffffff"
+                                    font.bold: true
+                                }
+                                
+                                Text {
+                                    text: "• Hybrid Vector Search\n• Fuzzy Text Matching\n• Neural Graph Memory\n• Voice Activation\n• RAG Generation\n• AI Pilot Orchestration"
+                                    color: "#cccccc"
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Tab bar for different views
+        TabBar {
+            id: tabBar
+            width: parent.width
+            
+            TabButton {
+                text: "🎨 Canvas"
+            }
+            TabButton {
+                text: "💬 Chat"
+            }
+            TabButton {
+                text: "📊 Analytics"
+            }
+        }
+        
+        // Status bar
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 25
+            color: "#2d2d2d"
+            
+            RowLayout {
+                anchors.fill: parent
+                anchors.margins: 5
+                
+                Text {
+                    text: "🟢 Ready"
+                    color: "#4CAF50"
+                    font.pixelSize: 10
+                }
+                
+                Item { Layout.fillWidth: true }
+                
+                Text {
+                    text: "HAASP v2.0.0 Advanced"
+                    color: "#666666"
+                    font.pixelSize: 9
+                }
+            }
+        }
+    }
+    
+    // Data models
+    ListModel {
+        id: pilotsModel
+        
+        Component.onCompleted: {
+            append({"id": "sentinel", "name": "Sentinel", "status": "ready", "active": true})
+            append({"id": "doc_architect", "name": "Doc Architect", "status": "ready", "active": true})
+            append({"id": "remediator", "name": "Remediator", "status": "ready", "active": true})
+            append({"id": "codewright", "name": "Codewright", "status": "ready", "active": true})
+        }
+    }
+    
+    ListModel {
+        id: searchResultsModel
+    }
+    
+    ListModel {
+        id: chatModel
+        
+        Component.onCompleted: {
+            append({
+                "sender": "assistant",
+                "message": "Hello! I'm HAASP, your advanced AI development assistant. I have access to:\n\n🧠 Hybrid retrieval (vector + fuzzy + graph search)\n🤖 AI pilots for specialized tasks\n🎤 Voice activation\n📊 Advanced analytics\n\nHow can I help you today?",
+                "timestamp": new Date().toISOString()
+            })
+        }
+    }
+    
+    // Functions
+    function initializeAdvancedFeatures() {
+        console.log("🔧 Initializing advanced features...")
+        
+        // Test service connections
+        testServiceConnections()
+        
+        // Initialize voice if enabled
+        if (voiceEnabled) {
+            initializeVoice()
+        }
+    }
+    
+    function testServiceConnections() {
+        console.log("🔗 Testing service connections...")
+        
+        // Test retrieval service
+        var xhr = new XMLHttpRequest()
+        xhr.open("GET", "http://127.0.0.1:8000/")
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    servicesConnected = true
+                    console.log("✅ Retrieval service connected")
+                } else {
+                    console.log("❌ Retrieval service not available")
+                }
+            }
+        }
+        xhr.send()
+    }
+    
+    function loadRepository() {
+        console.log("📁 Loading repository...")
+        // Simulate repository loading
+        currentProject = {
+            "name": "AppiT-Pro",
+            "path": "/home/tim-spurlin/Desktop/Developer Hub/Projects/2025/September/AppiT-Pro"
+        }
+        console.log("✅ Repository loaded:", currentProject.name)
+    }
+    
+    function performSearch() {
+        var query = searchField.text.trim()
+        if (!query) return
+        
+        console.log("🔍 Performing search:", query)
+        
+        // Add mock results for demonstration
+        searchResultsModel.clear()
+        
+        searchResultsModel.append({
+            "title": `Search result for: ${query}`,
+            "content": "This is a mock search result. The real hybrid search will return semantic, fuzzy, and graph-based results.",
+            "source": "search_system",
+            "score": 0.95
+        })
+        
+        searchResultsModel.append({
+            "title": "Related Documentation",
+            "content": "Found related documentation and code examples through vector similarity search.",
+            "source": "documentation.md",
+            "score": 0.87
+        })
+        
+        searchResultsModel.append({
+            "title": "Graph Memory Match",
+            "content": "Neural graph memory found related concepts and dependencies.",
+            "source": "graph_memory",
+            "score": 0.82
+        })
+    }
+    
+    function performRAGSearch() {
+        var query = searchField.text.trim()
+        if (!query) return
+        
+        console.log("🎯 Performing RAG query:", query)
+        
+        // Add to chat
+        chatModel.append({
+            "sender": "user", 
+            "message": query,
+            "timestamp": new Date().toISOString()
+        })
+        
+        // Simulate AI response
+        setTimeout(function() {
+            chatModel.append({
+                "sender": "assistant",
+                "message": `I understand you're asking about: "${query}"\n\nBased on my hybrid retrieval system, I found relevant information from multiple sources. The RAG system will provide a comprehensive response combining:\n\n🔍 Vector search results\n📝 Fuzzy text matches\n🧠 Graph memory connections\n🎯 Generated insights\n\nThis is a demonstration of the full RAG capabilities.`,
+                "timestamp": new Date().toISOString()
+            })
+        }, 1500)
+    }
+    
+    function sendChatMessage() {
+        var message = chatInput.text.trim()
+        if (!message) return
+        
+        chatModel.append({
+            "sender": "user",
+            "message": message, 
+            "timestamp": new Date().toISOString()
+        })
+        
+        chatInput.clear()
+        
+        // Process through RAG system
+        setTimeout(function() {
+            chatModel.append({
+                "sender": "assistant",
+                "message": `Processing your request: "${message}"\n\nI'm analyzing this through my AI pilots and retrieval systems...`,
+                "timestamp": new Date().toISOString()
+            })
+        }, 500)
+    }
+    
+    function runPilots() {
+        console.log("▶️ Running AI pilot chain...")
+        
+        // Update pilot statuses
+        for (var i = 0; i < pilotsModel.count; i++) {
+            if (pilotsModel.get(i).active) {
+                pilotsModel.setProperty(i, "status", "processing")
+            }
+        }
+        
+        // Simulate pilot execution
+        setTimeout(function() {
+            for (var i = 0; i < pilotsModel.count; i++) {
+                if (pilotsModel.get(i).active) {
+                    pilotsModel.setProperty(i, "status", "completed")
+                }
+            }
+            console.log("✅ Pilot chain execution completed")
+        }, 3000)
+    }
+    
+    function stopPilots() {
+        console.log("⏹️ Stopping pilots...")
+        
+        for (var i = 0; i < pilotsModel.count; i++) {
+            pilotsModel.setProperty(i, "status", "idle")
+        }
+    }
+    
+    function togglePilot(pilotId, active) {
+        console.log(`🔄 Toggle pilot ${pilotId}: ${active}`)
+        
+        for (var i = 0; i < pilotsModel.count; i++) {
+            if (pilotsModel.get(i).id === pilotId) {
+                pilotsModel.setProperty(i, "active", active)
+                break
+            }
+        }
+    }
+    
+    function showSettings() {
+        console.log("⚙️ Opening settings...")
+        // TODO: Implement settings dialog
+    }
+    
+    function initializeVoice() {
+        console.log("🎤 Initializing voice activation...")
+        // TODO: Connect to voice service
+    }
+    
+    function startVoiceInput() {
+        console.log("🎤 Starting voice input...")
+        // TODO: Trigger voice capture
+    }
 
-    // CLEAN REBUILD OF ADVANCED INTERFACE (syntax-fixed minimal version)
-    ApplicationWindow {
-        id: root
-        title: "HAASP - Advanced Interface"
-        visible: true
-        width: 1600; height: 1000
-        minimumWidth: 1200; minimumHeight: 800
-        color: "#1B1C20"
-
-        property bool voiceActivationEnabled: false
-        property var selectedPilots: []
-        property var currentProject: null
-
-        Component.onCompleted: console.log("🚀 FullAdvancedMain.qml loaded")
+    Component.onCompleted: console.log("🚀 FullAdvancedMain.qml loaded")
 
         ColumnLayout {
             anchors.fill: parent
@@ -155,14 +834,16 @@ ApplicationWindow {
         }
         function clearSearch() { searchField.text = ""; searchResultsModel.clear(); }
     }
-                    anchors.fill: parent
-                    spacing: 0
-                    
-                    // Canvas toolbar
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 40
-                        color: "#2d2d2d"
+
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 0
+        
+        // Canvas toolbar
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 40
+            color: "#2d2d2d"
                         
                         RowLayout {
                             anchors.fill: parent

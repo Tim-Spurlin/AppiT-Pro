@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find Qt6 components
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Qml Quick QuickControls2 Concurrent)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Qml Quick QuickControls2 Concurrent Network)
 
 # Find libgit2
 find_package(PkgConfig REQUIRED)
@@ -52,6 +52,8 @@ qt_add_executable(haasp
     src/nucleus/git_service.hpp
     src/nucleus/quantum_conduit.hpp
     src/ui/controller.hpp
+    src/services/retrieval_client.cpp
+    src/services/retrieval_client.hpp
     resources.qrc
 )
 
@@ -66,6 +68,7 @@ target_link_libraries(haasp PRIVATE
     Qt6::Quick
     Qt6::QuickControls2
     Qt6::Concurrent
+    Qt6::Network
     ${LIBGIT2_LIBRARIES}
     ${PROTOBUF_LIBRARIES}
     ${GRPC_LIBRARIES}

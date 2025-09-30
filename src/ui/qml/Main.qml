@@ -49,75 +49,56 @@ Kirigami.ApplicationWindow {
         ]
 
         ColumnLayout {
-            anchors.fill: parent        
+            anchors.fill: parent
+            
+            // Header
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 60
+                color: "#2d2d2d"
 
-                icon.name: "folder-open"        // Header
-
-                text: "Open Repository"        Rectangle {
-
-                onTriggered: openRepoDialog.open()            Layout.fillWidth: true
-
-            }            Layout.preferredHeight: 60
-
-            right: Kirigami.Action {            color: "#2d2d2d"
-
-                icon.name: "settings-configure"            
-
-                text: "Settings"            Text {
-
-                onTriggered: settingsPage.open()                anchors.centerIn: parent
-
-            }                text: "HAASP - Development Platform"
-
-        }                color: "white"
-
-                font.pixelSize: 18
-
-        RowLayout {                font.bold: true
-
-            anchors.fill: parent            }
-
-            spacing: 0        }
-
-        
-
-            // Git Portal (Left Sidebar)        // Main content area
-
-            GitPortal {        Rectangle {
-
-                id: gitPortal            Layout.fillWidth: true
-
-                Layout.preferredWidth: 300            Layout.fillHeight: true
-
-                Layout.fillHeight: true            color: "#1e1e1e"
-
-                Layout.minimumWidth: 250            
-
-            Text {
-
-                onRepositoryOpened: {                anchors.centerIn: parent
-
-                    previewSurface.loadProject(repoPath)                text: "🎉 HAASP Application Started Successfully!\n\nThis is the QML interface.\nIt's working!"
-
-                    controller.onRepositoryOpened()                color: "white"
-
-                }                font.pixelSize: 16
-
-            }                horizontalAlignment: Text.AlignHCenter
-
+                Text {
+                    anchors.centerIn: parent
+                    text: "HAASP - Development Platform"
+                    color: "white"
+                    font.pixelSize: 18
+                    font.bold: true
+                }
             }
 
-            // Preview Surface (Center)        }
+            RowLayout {
+                anchors.fill: parent
+                spacing: 0
 
-            PreviewSurface {        
+                // Git Portal (Left Sidebar)
+                GitPortal {
+                    id: gitPortal
+                    Layout.preferredWidth: 300
+                    Layout.fillHeight: true
+                    Layout.minimumWidth: 250
 
-                id: previewSurface        // Status bar
+                    onRepositoryOpened: {
+                        previewSurface.loadProject(repoPath)
+                        controller.onRepositoryOpened()
+                    }
+                }
 
-                Layout.fillWidth: true        Rectangle {
+                // Main content area
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: "#1e1e1e"
 
-                Layout.fillHeight: true            Layout.fillWidth: true
+                    Text {
+                        anchors.centerIn: parent
+                        text: "🎉 HAASP Application Started Successfully!\n\nThis is the QML interface.\nIt's working!"
+                        color: "white"
+                        font.pixelSize: 16
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                }
 
-            Layout.preferredHeight: 30
+            }\n\n                // Preview Surface (Center)\n                PreviewSurface {\n                    id: previewSurface\n                    Layout.fillWidth: true\n                    Layout.fillHeight: true\n                }\n            }\n\n            // Status bar\n            Rectangle {\n                Layout.fillWidth: true\n                Layout.preferredHeight: 30
 
                 onElementSelected: {            color: "#2d2d2d"
 

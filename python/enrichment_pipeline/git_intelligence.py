@@ -449,7 +449,48 @@ class GitIntelligencePipeline:
         
         return min(1.0, total_impact / len(changed_files))
 
-# AI Organism Simulation
+    async def _run_standalone_mode(self):
+        """Run in standalone mode without Kafka"""
+        logger.info("🔄 Running Git Intelligence Pipeline in standalone mode...")
+
+        # Simple loop that monitors for repositories and processes them
+        while True:
+            try:
+                # Look for repositories in common paths
+                import os
+                home_dir = os.path.expanduser("~")
+                common_paths = [
+                    os.path.join(home_dir, "Desktop"),
+                    os.path.join(home_dir, "Documents"),
+                    os.path.join(home_dir, "Projects"),
+                    "/tmp",
+                    "."
+                ]
+
+                repositories_found = []
+                for path in common_paths:
+                    if os.path.exists(os.path.join(path, ".git")):
+                        repositories_found.append(path)
+
+                if repositories_found:
+                    logger.info(f"📁 Found {len(repositories_found)} repositories")
+                    for repo_path in repositories_found:
+                        logger.info(f"📊 Analyzing repository: {repo_path}")
+                        try:
+                            await self._analyze_repository(repo_path)
+                        except Exception as e:
+                            logger.error(f"Error analyzing {repo_path}: {e}")
+                else:
+                    logger.debug("No repositories found in common paths")
+
+                # Sleep for a while before checking again
+                await asyncio.sleep(300)  # Check every 5 minutes
+
+            except Exception as e:
+                logger.error(f"Error in standalone mode: {e}")
+                await asyncio.sleep(60)
+
+
 class AIOrganismReplicator:
     """Self-replicating AI organisms for continuous enrichment"""
     
@@ -540,63 +581,3 @@ class AIOrganismReplicator:
             target = np.random.choice([o for o in self.organisms if o['id'] != organism['id']])
             target['enrichment_data'].extend(organism['enrichment_data'])
             logger.debug(f"Organism {organism['id']} passed data to {target['id']}")
-
-    async def _run_standalone_mode(self):
-        """Run in standalone mode without Kafka"""
-        logger.info("🔄 Running in standalone mode - monitoring local repositories...")
-        
-        # Simple loop that processes any detected repositories
-        while True:
-            try:
-                # Look for repositories in common paths
-                import os
-                home_dir = os.path.expanduser("~")
-                common_paths = [
-                    os.path.join(home_dir, "Desktop"),
-                    os.path.join(home_dir, "Documents"),
-                    "/tmp",
-                    "."
-                ]
-                
-                for path in common_paths:
-                    if os.path.exists(os.path.join(path, ".git")):
-                        logger.info(f"📁 Found repository: {path}")
-                        # Basic analysis without Kafka
-                        await self._analyze_repository_standalone(path)
-                
-                # Sleep for a while before checking again
-                await asyncio.sleep(60)  # Check every minute
-                
-            except Exception as e:
-                logger.error(f"Error in standalone mode: {e}")
-                await asyncio.sleep(30)
-
-    async def _analyze_repository_standalone(self, repo_path: str):
-        """Analyze repository in standalone mode"""
-        try:
-            logger.info(f"📊 Analyzing repository: {repo_path}")
-            # Basic analysis that doesn't require Kafka
-            # This could log results or save to local files
-            
-        except Exception as e:
-            logger.error(f"Error analyzing repository {repo_path}: {e}")
-
-# Main entry point
-async def main():
-    """Main entry point for Git Intelligence Pipeline"""
-    pipeline = GitIntelligencePipeline()
-    
-    # Start organism replicator
-    organism_replicator = AIOrganismReplicator()
-    
-    # Spawn initial organisms
-    await organism_replicator.spawn_organism(
-        "How can we optimize HAASP's QML performance?",
-        {"component": "PreviewSurface", "type": "performance"}
-    )
-    
-    # Start main pipeline
-    await pipeline.start()
-
-if __name__ == "__main__":
-    asyncio.run(main())
